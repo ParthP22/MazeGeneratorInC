@@ -1,21 +1,15 @@
-#include <stdio.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#define WIDTH 800
-#define HEIGHT 600
-
+#include "main.h"
 
 int main(void)
 {
     GLFWwindow* window;
-
+    DisjointSet* djs = djs_init(WIDTH * HEIGHT / UNIT_SIZE);
     /* Initialize the library */
     if (!glfwInit())
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(WIDTH, HEIGHT, "Maze Generator", NULL, NULL);
     if (!window)
     {
         glfwTerminate();

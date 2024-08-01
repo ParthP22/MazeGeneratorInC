@@ -12,10 +12,10 @@ int main(void)
 
 
 
-    int (*edge_list)[2] = (int(*)[2])malloc(sizeof(int) * (2 * GRID_WIDTH * (GRID_WIDTH - 1)) * 2);
+    int (*edges)[2] = (int(*)[2])malloc(sizeof(int) * (2 * GRID_WIDTH * (GRID_WIDTH - 1)) * 2);
 
-    if(edge_list == NULL){
-        fprintf(stderr, "Malloc for \'edge_list\' failed");
+    if(edges == NULL){
+        fprintf(stderr, "Malloc for \'edges\' failed");
     }   
 
     for(int i = 0, k = 1; i < GRID_HEIGHT; i++){
@@ -28,13 +28,13 @@ int main(void)
     for(int i = 0, k = 0; i < GRID_HEIGHT; i++){
         for(int j = 0; j < GRID_WIDTH; j++){
             if(j + 1 < GRID_WIDTH){
-                edge_list[k][0] = grid[i][j];
-                edge_list[k][1] = grid[i][j+1];
+                edges[k][0] = grid[i][j];
+                edges[k][1] = grid[i][j+1];
                 k++;
             }
             if(i + 1 < GRID_HEIGHT){
-                edge_list[k][0] = grid[i][j];
-                edge_list[k][1] = grid[i+1][j];
+                edges[k][0] = grid[i][j];
+                edges[k][1] = grid[i+1][j];
                 k++;
             }
         }
@@ -48,12 +48,20 @@ int main(void)
     }
     printf("]");
 
+    EdgeList* edge_list = edgelist_init((2 * GRID_WIDTH * (GRID_WIDTH - 1)));
+
     printf("\nEdges: [");
     for(int i = 0; i < (2 * GRID_WIDTH * (GRID_WIDTH - 1)); i++){
-        printf("[%d, %d], ", edge_list[i][0], edge_list[i][1]);
-        
+        printf("[%d, %d], ", edges[i][0], edges[i][1]);
+        edgelist_add(edge_list, edges[i]);
     }
     printf("]");
+
+    edgelist_to_string(edge_list);
+
+
+
+
 
 
 

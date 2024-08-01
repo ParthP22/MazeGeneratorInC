@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "disjoint_set.h"
+#include "edge_list.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 

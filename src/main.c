@@ -12,41 +12,62 @@ int main(void)
 
 
 
-    int (*edges)[2] = (int(*)[2])malloc(sizeof(int) * (2 * GRID_WIDTH * (GRID_WIDTH - 1)) * 2);
+    int (*edges)[4] = (int(*)[4])malloc(sizeof(int) * (2 * GRID_WIDTH * (GRID_WIDTH - 1)) * 4);
 
     if(edges == NULL){
         fprintf(stderr, "Malloc for \'edges\' failed");
     }   
 
-    for(int i = 0, k = 1; i < GRID_HEIGHT; i++){
+    for(int i = 0, k = 0; i < GRID_HEIGHT; i++){
         for(int j = 0; j < GRID_WIDTH; j++){
             grid[i][j] = k;
             k++; 
         }
     }
 
+    //edges[k][3] == 0, then the line is horizontal
+    //edges[k][3] == 1, then the line is vertical
+
     for(int i = 0, k = 0; i < GRID_HEIGHT; i++){
         for(int j = 0; j < GRID_WIDTH; j++){
             if(j + 1 < GRID_WIDTH){
                 edges[k][0] = grid[i][j];
                 edges[k][1] = grid[i][j+1];
+                edges[k][2] = 1;
                 k++;
             }
             if(i + 1 < GRID_HEIGHT){
                 edges[k][0] = grid[i][j];
                 edges[k][1] = grid[i+1][j];
+                edges[k][2] = 0;
                 k++;
             }
         }
     }
 
-    printf("Nodes: [");
-    for(int i = 0; i < GRID_HEIGHT; i++){
-        for(int j = 0; j < GRID_WIDTH; j++){
-            printf("%d, ", grid[i][j]);
-        }
+    srand(time(NULL));
+
+    // Generate a random number between 0 and RAND_MAX
+    int random_number = rand();
+    printf("Random number (0 to RAND_MAX): %d\n", random_number);
+
+    // Generate a random number between 1 and 100
+    int min = 1;
+    int max = INT32_MAX;
+
+    for(int i = 0; i < (2 * GRID_WIDTH * (GRID_WIDTH - 1)); i++){
+        edges[i][3] = rand() % (max - min + 1) + min;
     }
-    printf("]");
+
+
+
+    // printf("Nodes: [");
+    // for(int i = 0; i < GRID_HEIGHT; i++){
+    //     for(int j = 0; j < GRID_WIDTH; j++){
+    //         printf("%d, ", grid[i][j]);
+    //     }
+    // }
+    // printf("]");
 
     EdgeList* edge_list = edgelist_init((2 * GRID_WIDTH * (GRID_WIDTH - 1)));
 
@@ -57,8 +78,40 @@ int main(void)
     }
     printf("]");
 
-    edgelist_to_string(edge_list);
+    edgelist_sort(edge_list);
 
+    // edgelist_to_string(edge_list);
+
+    DisjointSet* forest = djs_init(GRID_WIDTH * GRID_WIDTH);
+    int size = edgelist_size(edge_list);
+    // printf("Print: %d", size);
+
+    EdgeList* mst = edgelist_init(GRID_WIDTH - 1);
+    // int* tmp = edgelist_get(edge_list,0);
+    // printf("Print %d, ", tmp[0]);
+
+    for(int i = 0; i < size; i++){
+        int* node = edgelist_get(edge_list,i);
+        if(node == NULL){
+            // printf("Initial Index: %d", i);
+            break;
+        }
+        //printf("\nIndex: %d", i);
+        int initial_node = djs_find_representative(forest, node[0]);
+        int terminal_node = djs_find_representative(forest, node[1]);
+        
+        if(initial_node != terminal_node){
+            int* tmp = edgelist_get(edge_list,i);
+            if(tmp == NULL){
+                printf("Tmp is NULL, index: %d", i);
+            }
+            edgelist_add(mst, tmp);
+            
+            djs_union(forest, initial_node, terminal_node);
+        }
+    }
+
+    // edgelist_to_string(mst);
 
 
 
@@ -66,43 +119,42 @@ int main(void)
 
 
     
-    // GLFWwindow* window;
-    // DisjointSet* djs = djs_init(GRID_WIDTH * GRID_HEIGHT);
-    // /* Initialize the library */
-    // if (!glfwInit())
-    //     return -1;
+    GLFWwindow* window;
+    /* Initialize the library */
+    if (!glfwInit())
+        return -1;
 
-    // /* Create a windowed mode window and its OpenGL context */
-    // window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "Maze Generator", NULL, NULL);
-    // if (!window)
-    // {
-    //     glfwTerminate();
-    //     return -1;
-    // }
+    /* Create a windowed mode window and its OpenGL context */
+    window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "Maze Generator", NULL, NULL);
+    if (!window)
+    {
+        glfwTerminate();
+        return -1;
+    }
 
-    // /* Make the window's context current */
-    // glfwMakeContextCurrent(window);
+    /* Make the window's context current */
+    glfwMakeContextCurrent(window);
 
-	// if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    // {
-    //     printf("Failed to initialize GLAD\n");
-    //     return -1;
-    // }
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        printf("Failed to initialize GLAD\n");
+        return -1;
+    }
 
-    // /* Loop until the user closes the window */
-    // while (!glfwWindowShouldClose(window))
-    // {
-    //     /* Render here */
-    //     glClear(GL_COLOR_BUFFER_BIT);
+    /* Loop until the user closes the window */
+    while (!glfwWindowShouldClose(window))
+    {
+        /* Render here */
+        glClear(GL_COLOR_BUFFER_BIT);
 
-    //     /* Swap front and back buffers */
-    //     glfwSwapBuffers(window);
+        /* Swap front and back buffers */
+        glfwSwapBuffers(window);
 
-    //     /* Poll for and process events */
-    //     glfwPollEvents();
-    // }
+        /* Poll for and process events */
+        glfwPollEvents();
+    }
 
-    // glfwTerminate();
+    glfwTerminate();
     
     return 0;
 }

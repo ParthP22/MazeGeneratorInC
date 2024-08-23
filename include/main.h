@@ -3,13 +3,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "disjoint_set.h"
 #include "edge_list.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#define WIN_WIDTH 75
-#define WIN_HEIGHT 75
+#define WIN_WIDTH 600
+#define WIN_HEIGHT 600
 #define UNIT_SIZE 25
 #define GRID_WIDTH WIN_WIDTH / UNIT_SIZE
 #define GRID_HEIGHT WIN_HEIGHT / UNIT_SIZE

@@ -53,7 +53,7 @@ int main(void)
 
     // Generate a random number between 1 and 100
     int min = 1;
-    int max = INT32_MAX;
+    int max = INT_MAX;
 
     for(int i = 0; i < (2 * GRID_WIDTH * (GRID_WIDTH - 1)); i++){
         edges[i][3] = rand() % (max - min + 1) + min;
@@ -119,42 +119,17 @@ int main(void)
 
 
     
-    GLFWwindow* window;
-    /* Initialize the library */
-    if (!glfwInit())
-        return -1;
-
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "Maze Generator", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
+    const int screenWidth = 800;
+    const int screenHeight = 600;
+    InitWindow(screenWidth, screenHeight, "MazeGeneratorInC");
+    SetTargetFPS(30);
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawText("Yuhhh", 20, 20, 20, BLACK);
+        EndDrawing();
     }
-
-    /* Make the window's context current */
-    glfwMakeContextCurrent(window);
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        printf("Failed to initialize GLAD\n");
-        return -1;
-    }
-
-    /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
-    {
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        /* Swap front and back buffers */
-        glfwSwapBuffers(window);
-
-        /* Poll for and process events */
-        glfwPollEvents();
-    }
-
-    glfwTerminate();
+    CloseWindow();
     
     return 0;
 }

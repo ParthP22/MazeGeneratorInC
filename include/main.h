@@ -6,8 +6,8 @@
 #include <time.h>
 #include "disjoint_set.h"
 #include "edge_list.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <limits.h>
+#include "raylib.h"
 
 #define WIN_WIDTH 600
 #define WIN_HEIGHT 600

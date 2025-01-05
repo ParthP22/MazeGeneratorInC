@@ -3,7 +3,7 @@
 int main(void)
 {   
 
-
+    //Grid is initialized with size n*n
     int (*grid)[GRID_WIDTH] = (int(*)[GRID_WIDTH])malloc(sizeof(int) * GRID_HEIGHT * GRID_WIDTH);
 
     if(grid == NULL){
@@ -11,13 +11,15 @@ int main(void)
     }
 
 
-
-    int (*edges)[4] = (int(*)[4])malloc(sizeof(int) * (2 * GRID_WIDTH * (GRID_WIDTH - 1)) * 4);
+    //initializes a 2D matrix with 2*n*(n-1) rows (which is the number of edges in a grid) and
+    //4 columns for each row.
+    int (*edges)[5] = (int(*)[5])malloc(sizeof(int) * (2 * GRID_WIDTH * (GRID_WIDTH - 1)) * 5);
 
     if(edges == NULL){
         fprintf(stderr, "Malloc for \'edges\' failed");
     }   
 
+    //Each node in the grid is numbered 0 to (n*n) - 1
     for(int i = 0, k = 0; i < GRID_HEIGHT; i++){
         for(int j = 0; j < GRID_WIDTH; j++){
             grid[i][j] = k;
@@ -25,17 +27,20 @@ int main(void)
         }
     }
 
-    //edges[k][3] == 0, then the line is horizontal
-    //edges[k][3] == 1, then the line is vertical
-
+    //edges[k][2] == 0, then the line is horizontal
+    //edges[k][2] == 1, then the line is vertical
+    //k is referring to the node in the grid (numbered from 0,...,n*n)
+    //edges[k][0] is the initial node of the edge, and edges[k][1] is the terminal node
     for(int i = 0, k = 0; i < GRID_HEIGHT; i++){
         for(int j = 0; j < GRID_WIDTH; j++){
+            //determines of the edge exists and if it will be drawn as a vertical line
             if(j + 1 < GRID_WIDTH){
                 edges[k][0] = grid[i][j];
                 edges[k][1] = grid[i][j+1];
                 edges[k][2] = 1;
                 k++;
             }
+            //determines of the edge exists and if it will be drawn as a horizontal line
             if(i + 1 < GRID_HEIGHT){
                 edges[k][0] = grid[i][j];
                 edges[k][1] = grid[i+1][j];
@@ -55,8 +60,10 @@ int main(void)
     int min = 1;
     int max = INT_MAX;
 
+    // Sets a random weight for every edge
     for(int i = 0; i < (2 * GRID_WIDTH * (GRID_WIDTH - 1)); i++){
         edges[i][3] = rand() % (max - min + 1) + min;
+        edges[i][4] = 1;
     }
 
 
@@ -106,12 +113,15 @@ int main(void)
                 printf("Tmp is NULL, index: %d", i);
             }
             edgelist_add(mst, tmp);
+
+            edge_list->arr[i][4] = 0;
             
             djs_union(forest, initial_node, terminal_node);
         }
     }
 
     // edgelist_to_string(mst);
+    // edgelist_to_string(edge_list);
 
 
 
@@ -119,14 +129,51 @@ int main(void)
 
 
     
-    const int screenWidth = 800;
-    const int screenHeight = 600;
-    InitWindow(screenWidth, screenHeight, "MazeGeneratorInC");
+
+    InitWindow(WIN_WIDTH, WIN_HEIGHT, "MazeGeneratorInC");
     SetTargetFPS(30);
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawText("Yuhhh", 20, 20, 20, BLACK);
+        // for (int x = 0; x <= WIN_WIDTH; x += UNIT_SIZE)
+        // {
+        //     DrawLine(x, 0, x, WIN_HEIGHT, LIGHTGRAY); // Vertical lines
+        // }
+        // for (int y = 0; y <= WIN_HEIGHT; y += UNIT_SIZE)
+        // {
+        //     DrawLine(0, y, WIN_WIDTH, y, LIGHTGRAY); // Horizontal lines
+        // }
+        for(int i = 0; i < edge_list->size; i++){
+
+            if (edge_list->arr[i][2] == 0) // Vertical edge
+            {
+            
+                if (edge_list->arr[i][4] == 1)
+                {
+                    int x1 = ((edge_list->arr[i][0] % GRID_WIDTH) + 1) * UNIT_SIZE;
+                    int y1 = ((edge_list->arr[i][0] / GRID_HEIGHT) + 1) * UNIT_SIZE - UNIT_SIZE;
+                    int x2 = ((edge_list->arr[i][0] % GRID_WIDTH) + 1) * UNIT_SIZE;
+                    int y2 = ((edge_list->arr[i][0] / GRID_HEIGHT) + 1) * UNIT_SIZE;
+                    DrawLine(x1, y1, x2, y2, LIGHTGRAY);
+                }
+
+            }
+            else if (edge_list->arr[i][2] == 1) // Horizontal edge
+            {
+            
+                if (edge_list->arr[i][4] == 1)
+                {
+                    int x1 = ((edge_list->arr[i][0] % GRID_WIDTH) + 1) * UNIT_SIZE - UNIT_SIZE;
+                    int y1 = ((edge_list->arr[i][0] / GRID_HEIGHT) + 1) * UNIT_SIZE;
+                    int x2 = ((edge_list->arr[i][0] % GRID_WIDTH) + 1) * UNIT_SIZE;
+                    int y2 = ((edge_list->arr[i][0] / GRID_HEIGHT) + 1) * UNIT_SIZE;
+                    DrawLine(x1, y1, x2, y2, LIGHTGRAY);
+                }
+            }
+        }
+
+        //DrawText("2D Grid Example", 10, 10, 20, DARKGRAY);
+
         EndDrawing();
     }
     CloseWindow();

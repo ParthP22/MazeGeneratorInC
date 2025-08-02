@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "reallocate.h"
+#include "edge.h"
 
 struct EdgeList{
     int capacity;

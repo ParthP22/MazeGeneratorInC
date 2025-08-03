@@ -1,9 +1,11 @@
 #ifndef EDGE_H_
 #define EDGE_H_
 
-enum Orientation{
+typedef enum Orientation{
     HORIZONTAL = 0,
     VERTICAL = 0
-}typedef Orientation;
+} Orientation;
+
+
 
 #endif

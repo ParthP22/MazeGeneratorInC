@@ -7,12 +7,10 @@
 #include <assert.h>
 #define LOG_DEBUG(TEXT) log_debug(__FILE__, __LINE__, TEXT)
 
-typedef struct DisjointSet DisjointSet;
-
-struct DisjointSet{
+typedef struct DisjointSet{
     int* representatives;
     int* rank;
-};
+} DisjointSet;
 
 DisjointSet* djs_init(int);
 int djs_find_representative(DisjointSet*,int);

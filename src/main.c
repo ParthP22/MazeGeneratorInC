@@ -2,92 +2,75 @@
 
 int main(void)
 {   
-
+    // Initialize Maze Generator
     MazeGenerator* maze_generator = mazegenerator_init();
 
+    // Run Kruskal's algorithm
     kruskals(maze_generator);
 
-    EdgeList* edge_list = maze_generator->edge_list;
+    // Store ref for list of edges and size
+    Edge* list = maze_generator->edge_list->list;
+    int size = maze_generator->edge_list->size;
 
-    // edgelist_to_string(mst);
-    // edgelist_to_string(edge_list);
-
-
-
-
-
-
-    
-
+    // Initialize window using raylib
     InitWindow(WIN_WIDTH, WIN_HEIGHT, "MazeGeneratorInC");
     SetTargetFPS(30);
     while (!WindowShouldClose()) {
         BeginDrawing();
+
+        // Set background to white
         ClearBackground(RAYWHITE);
-        // for (int x = 0; x <= WIN_WIDTH; x += UNIT_SIZE)
-        // {
-        //     DrawLine(x, 0, x, WIN_HEIGHT, LIGHTGRAY); // Vertical lines
-        // }
-        // for (int y = 0; y <= WIN_HEIGHT; y += UNIT_SIZE)
-        // {
-        //     DrawLine(0, y, WIN_WIDTH, y, LIGHTGRAY); // Horizontal lines
-        //}
-        for(int i = 0; i < edge_list->size; i++){
 
+        // Iterate through the list of edges and draw them if they weren't selected to be in the Minimum Spanning Tree
+        for(int i = 0; i < size; i++){
 
-            //Left Border
+            // Left Border
             DrawLine((MAZE_OFFSET), (0), (MAZE_OFFSET), (GRID_HEIGHT * UNIT_SIZE + MAZE_OFFSET), BLACK);
         
-            //Top Border*@
+            // Top Border
             DrawLine((MAZE_OFFSET + UNIT_SIZE), (MAZE_OFFSET), (GRID_HEIGHT * UNIT_SIZE + MAZE_OFFSET), (MAZE_OFFSET), BLACK);
 
-            //Small Line Pointing Up Along the Top Border*@
+            // Small Line Pointing Up Along the Top Border
             DrawLine((MAZE_OFFSET + UNIT_SIZE), (MAZE_OFFSET), (MAZE_OFFSET + UNIT_SIZE), (0), BLACK);
         
-            //Right Border*@
+            // Right Border
             DrawLine((GRID_WIDTH * UNIT_SIZE + MAZE_OFFSET), (MAZE_OFFSET), (GRID_WIDTH * UNIT_SIZE + MAZE_OFFSET), (GRID_HEIGHT * UNIT_SIZE + (2 * MAZE_OFFSET)), BLACK);
 
-            //Bottom Border*@
+            // Bottom Border
             DrawLine((MAZE_OFFSET), (GRID_HEIGHT * UNIT_SIZE + MAZE_OFFSET), (GRID_WIDTH * UNIT_SIZE + MAZE_OFFSET - UNIT_SIZE), (GRID_HEIGHT * UNIT_SIZE + MAZE_OFFSET), BLACK);
 
 
-            //Small Line Pointing Down Along the Bottom Border*@
+            // Small Line Pointing Down Along the Bottom Border
             DrawLine((GRID_WIDTH * UNIT_SIZE + MAZE_OFFSET - UNIT_SIZE), (GRID_HEIGHT * UNIT_SIZE + MAZE_OFFSET), (GRID_WIDTH * UNIT_SIZE + MAZE_OFFSET - UNIT_SIZE), (GRID_HEIGHT * UNIT_SIZE + (2 * MAZE_OFFSET)), BLACK);
 
-
-            
-            if (edge_list->arr[i][2] == 1) // Vertical edge
+            // If the edge wasn't in the Minimum Spanning Tree, then draw it
+            if (list[i].selected == false)
             {
-            
-                if (edge_list->arr[i][4] == 1)
+                int init_node = list[i].init_node;
+                // Draw vertical edge
+                if (list[i].orientation == VERTICAL)
                 {
-                    int x1 = ((edge_list->arr[i][0] % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int y1 = ((edge_list->arr[i][0] / (GRID_HEIGHT)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
-                    int x2 = ((edge_list->arr[i][0] % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int y2 = ((edge_list->arr[i][0] / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    //printf("\nx1: %d, x2: %d, y1: %d, y2: %d", x1,x2,y1,y2);
+                    int x1 = ((init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int y1 = ((init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
+                    int x2 = ((init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int y2 = ((init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
                     DrawLine(x1, y1, x2, y2, BLACK);
                 }
-
-            }
-            else if (edge_list->arr[i][2] == 0) // Horizontal edge
-            {
-            
-                if (edge_list->arr[i][4] == 1)
+                // Draw horizontal edge
+                else if (list[i].orientation == HORIZONTAL)
                 {
-                    int x1 = ((edge_list->arr[i][0] % (GRID_WIDTH)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
-                    int y1 = ((edge_list->arr[i][0] / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int x2 = ((edge_list->arr[i][0] % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int y2 = ((edge_list->arr[i][0] / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    //printf("\nx1: %d, x2: %d, y1: %d, y2: %d", x1,x2,y1,y2);
+                    int x1 = ((init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
+                    int y1 = ((init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int x2 = ((init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int y2 = ((init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
                     DrawLine(x1, y1, x2, y2, BLACK);
+                    
                 }
             }
+            
+            
             
         }
-
-        //DrawText("2D Grid Example", 10, 10, 20, DARKGRAY);
-
         EndDrawing();
     }
     CloseWindow();

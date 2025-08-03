@@ -1,34 +1,42 @@
 #include "edge_list.h"
 
+// Random Note (8/3/2025): We use the "address of" operator on each element in
+// the array of Edges, because the Edge struct itself is not a pointer. Edge* list is
+// the array, while list[i] is the element, so in order to pass it in as a pointer,
+// we have to pass in the address of that struct by doing &(list[i]).
+
+
 EdgeList* edgelist_init(int capacity){
     EdgeList* edge_list = (EdgeList*)malloc(sizeof(EdgeList));
-    edge_list->arr = (int(*)[5])malloc(sizeof(int)* 5 * capacity);
+    edge_list->list = (Edge*)malloc(sizeof(Edge) * capacity);
     edge_list->capacity = capacity;
     edge_list->size = 0;
     return edge_list;
 }
 
-bool edgelist_add(EdgeList* edge_list, int edge[5]){
+bool edgelist_add(EdgeList* edge_list, Edge* edge){
     if(edge_list == NULL){
         printf("\nEdgeList is null");
         return false;
     }
     else{
-        edge_list->arr[edge_list->size][0] = edge[0];
-        edge_list->arr[edge_list->size][1] = edge[1];
-        edge_list->arr[edge_list->size][2] = edge[2];
-        edge_list->arr[edge_list->size][3] = edge[3];
-        edge_list->arr[edge_list->size][4] = edge[4];
+        // Store refs for list and current size of list
+        Edge* list = edge_list->list;
+        int curr_size = edge_list->size;
+
+        // Add new Edge struct to the end of the list
+        edge_copy(&(list[curr_size]),edge);
         edge_list->size++;
+        
+        // Reallocate the list if it reached max capacity
         if(edge_list->size == edge_list->capacity){
-            edge_list->arr = _edgelist_reallocate(edge_list);
-            //printf("Realloc...");
+            edge_list->list = _edgelist_reallocate(edge_list);
         }
         return true;
     }
 }
 
-bool edgelist_insert(EdgeList* edge_list, int index, int edge[5]){
+bool edgelist_insert(EdgeList* edge_list, int index, Edge* edge){
     if(edge_list == NULL){
         printf("\nEdgeList is null");
         return false;
@@ -38,28 +46,27 @@ bool edgelist_insert(EdgeList* edge_list, int index, int edge[5]){
         return false;
     }
     else{
-        for(int i = edge_list->size; i >= index; i--){
-            edge_list->arr[i+1][0] = edge_list->arr[i][0];
-            edge_list->arr[i+1][1] = edge_list->arr[i][1];
-            edge_list->arr[i+1][2] = edge_list->arr[i][2];
-            edge_list->arr[i+1][3] = edge_list->arr[i][3];
-            edge_list->arr[i+1][4] = edge_list->arr[i][4];
+        // Store refs for list and current size of list
+        Edge* list = edge_list->list;
+        int curr_size = edge_list->size;
+
+        // Insert new Edge struct at index
+        for(int i = curr_size; i >= index; i--){
+            edge_copy(&(list[i+1]),&(list[i]));
         }
-        edge_list->arr[index][0] = edge[0];
-        edge_list->arr[index][1] = edge[1];
-        edge_list->arr[index][2] = edge[2];
-        edge_list->arr[index][3] = edge[3];
-        edge_list->arr[index][4] = edge[4];
+        edge_copy(&(list[index]),edge);
         edge_list->size++;
+
+        // Reallocate the list if it reached max capacity
         if(edge_list->size == edge_list->capacity){
-            edge_list->arr = _edgelist_reallocate(edge_list);
+            edge_list->list = _edgelist_reallocate(edge_list);
         }
         return true;
     }
 
 }
 
-int* edgelist_remove(EdgeList* edge_list, int index){
+Edge* edgelist_remove(EdgeList* edge_list, int index){
     if(edge_list == NULL){
         printf("\nEdgeList is null");
         return NULL;
@@ -69,25 +76,26 @@ int* edgelist_remove(EdgeList* edge_list, int index){
         return NULL;
     }
     else{
-        int* prev_elem = edge_list->arr[index];
-        for(int i = index; i < edge_list->size - 1; i++){
-            edge_list->arr[i][0] = edge_list->arr[i+1][0];
-            edge_list->arr[i][1] = edge_list->arr[i+1][1];
-            edge_list->arr[i][2] = edge_list->arr[i+1][2];
-            edge_list->arr[i][3] = edge_list->arr[i+1][3];
-            edge_list->arr[i][4] = edge_list->arr[i+1][4];
+        // Store refs for list and current size of list
+        Edge* list = edge_list->list;
+        int curr_size = edge_list->size;
+
+        // Remove the Edge at index
+        Edge* prev_elem = &(edge_list->list[index]);
+        for(int i = index; i < curr_size - 1; i++){
+            edge_copy(&(list[i]),&(list[i+1]));
         }
-        edge_list->arr[edge_list->size - 1][0] = 0;
-        edge_list->arr[edge_list->size - 1][1] = 0;
-        edge_list->arr[edge_list->size - 1][2] = 0;
-        edge_list->arr[edge_list->size - 1][3] = 0;
-        edge_list->arr[edge_list->size - 1][4] = 0;
+
+        // Move the size pointer back by one
+        free(&(list[curr_size - 1]));
         edge_list->size--;
+
+        // Return the removed Edge
         return prev_elem;
     }
 }
 
-int* edgelist_get(EdgeList* edge_list, int index){
+Edge* edgelist_get(EdgeList* edge_list, int index){
     if(edge_list == NULL){
         printf("\nEdgeList is null");
         return NULL;
@@ -97,11 +105,12 @@ int* edgelist_get(EdgeList* edge_list, int index){
         return NULL;
     }
     else{
-        return edge_list->arr[index];
+        // Return the Edge at index
+        return &(edge_list->list[index]);
     }
 }
 
-int* edgelist_set(EdgeList* edge_list, int index, int edge[5]){
+Edge* edgelist_set(EdgeList* edge_list, int index, Edge* edge){
     if(edge_list == NULL){
         printf("\nEdgeList is null");
         return NULL;
@@ -111,12 +120,14 @@ int* edgelist_set(EdgeList* edge_list, int index, int edge[5]){
         return NULL;
     }
     else{
-        int* prev_elem = edge_list->arr[index];
-        edge_list->arr[index][0] = edge[0];
-        edge_list->arr[index][1] = edge[1];
-        edge_list->arr[index][2] = edge[2];
-        edge_list->arr[index][3] = edge[3];
-        edge_list->arr[index][4] = edge[4];
+        // Store ref for list
+        Edge* list = edge_list->list;
+
+        // Set the old Edge at index with the new Edge
+        Edge* prev_elem = &(list[index]);
+        edge_copy(&(list[index]),edge);
+
+        // Return the old Edge that was replaced
         return prev_elem;
     }
 }
@@ -127,6 +138,7 @@ int edgelist_size(EdgeList* edge_list){
         return 1/0;
     }
     else{
+        // Return the current size of the list
         return edge_list->size;
     }
 }
@@ -149,19 +161,25 @@ void edgelist_to_string(EdgeList* edge_list){
         printf("\nEdgeList is null");
         return;
     }
-    printf("\nEdgeList: \n[");
-    for(int i = 0; i < edge_list->size - 1; i++){
-        printf("[%d, %d, %d, %d, %d], \n", edge_list->arr[i][0],
-                                       edge_list->arr[i][1],
-                                       edge_list->arr[i][2],
-                                       edge_list->arr[i][3],
-                                       edge_list->arr[i][4]);
+    else{
+        // Store refs for list and current size of list
+        Edge* list = edge_list->list;
+        int curr_size = edge_list->size;
+
+        printf("\nEdgeList: \n[");
+        for(int i = 0; i < curr_size - 1; i++){
+            printf("[%d, %d, %d, %d, %d], \n", list[i].init_node,
+                                               list[i].term_node,
+                                               list[i].orientation,
+                                               list[i].rand_weight,
+                                               list[i].selected);
+        }
+        printf("[%d, %d, %d, %d, %d]]", list[edge_list->size - 1].init_node,
+                                        list[edge_list->size - 1].term_node,
+                                        list[edge_list->size - 1].orientation,
+                                        list[edge_list->size - 1].rand_weight,
+                                        list[edge_list->size - 1].selected);
     }
-    printf("[%d, %d, %d, %d, %d]]", edge_list->arr[edge_list->size - 1][0],
-                                edge_list->arr[edge_list->size - 1][1],
-                                edge_list->arr[edge_list->size - 1][2],
-                                edge_list->arr[edge_list->size - 1][3],
-                                edge_list->arr[edge_list->size - 1][4]);
 }
 
 void edgelist_sort(EdgeList* edge_list) {
@@ -169,26 +187,41 @@ void edgelist_sort(EdgeList* edge_list) {
         printf("\nEdgeList is null");
         return;
     }
-    qsort(edge_list->arr, edge_list->size, sizeof(edge_list->arr[0]), _compare_edges);
+    else{
+        qsort(edge_list->list, edge_list->size, sizeof(Edge), _compare_edges);
+    }
 }
 
 int _compare_edges(const void* a, const void* b) {
-    int (*pairA)[5] = (int(*)[5])a;
-    int (*pairB)[5] = (int(*)[5])b;
-    return (*pairA)[3] - (*pairB)[3]; // Compare based on the first element of the pairs
+    Edge* edgeA = (Edge*)a;
+    Edge* edgeB = (Edge*)b;
+    return edgeA->rand_weight - edgeB->rand_weight;
 }
 
-int (*_edgelist_reallocate(EdgeList* edge_list))[5]{
-    int new_cap =  edge_list->capacity * 2;
-    int (*new_arr)[5] = (int(*)[5])malloc(sizeof(int) * new_cap * 5);
-    for(int i = 0; i < edge_list->size; i++){
-        new_arr[i][0] = edge_list->arr[i][0];
-        new_arr[i][1] = edge_list->arr[i][1];
-        new_arr[i][2] = edge_list->arr[i][2];
-        new_arr[i][3] = edge_list->arr[i][3];
-        new_arr[i][4] = edge_list->arr[i][4];
+Edge* _edgelist_reallocate(EdgeList* edge_list){
+    if (edge_list == NULL) {
+        printf("\nEdgeList is null");
+        return NULL;
     }
-    free(edge_list->arr);
-    edge_list->capacity = new_cap;
-    return new_arr;
+    else{
+        // Store refs for list and current size of list
+        Edge* list = edge_list->list;
+        int curr_size = edge_list->size;
+
+        // Reallocate the list
+        int new_cap =  edge_list->capacity * 2;
+        Edge* new_list = (Edge*)malloc(sizeof(Edge) * new_cap);
+        for(int i = 0; i < curr_size; i++){
+            edge_copy(&new_list[i],&(list[i]));
+        }
+
+        // Free the space for the old list
+        free(list);
+         
+        // Update the new capacity for list
+        edge_list->capacity = new_cap;
+
+        // Return the new list
+        return new_list;
+    }
 }

@@ -23,12 +23,12 @@
 #error "WIN_HEIGHT must be a multiple of UNIT_SIZE"
 #endif
 
-struct MazeGenerator{
+typedef struct MazeGenerator{
     int (*grid)[GRID_WIDTH];
-    int (*edges)[5];
+    Edge* edges;
     EdgeList* edge_list;
     EdgeList* mst;
-}typedef MazeGenerator;
+} MazeGenerator;
 
 MazeGenerator* mazegenerator_init();
 EdgeList* kruskals(MazeGenerator*);

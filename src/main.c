@@ -46,22 +46,23 @@ int main(void)
             // If the edge wasn't in the Minimum Spanning Tree, then draw it
             if (list[i].selected == false)
             {
+                int init_node = list[i].init_node;
                 // Draw vertical edge
                 if (list[i].orientation == VERTICAL)
                 {
-                    int x1 = ((list[i].init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int y1 = ((list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
-                    int x2 = ((list[i].init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int y2 = ((list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int x1 = ((init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int y1 = ((init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
+                    int x2 = ((init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int y2 = ((init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
                     DrawLine(x1, y1, x2, y2, BLACK);
                 }
                 // Draw horizontal edge
                 else if (list[i].orientation == HORIZONTAL)
                 {
-                    int x1 = ((list[i].init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
-                    int y1 = ((list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int x2 = ((list[i].init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int y2 = ((list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int x1 = ((init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
+                    int y1 = ((init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int x2 = ((init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int y2 = ((init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
                     DrawLine(x1, y1, x2, y2, BLACK);
                     
                 }

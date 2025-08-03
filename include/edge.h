@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef enum Orientation{
     HORIZONTAL = 0,
@@ -17,5 +18,6 @@ typedef struct Edge{
     bool selected;
 } Edge;
 
+bool edge_copy(Edge*,Edge*);
 
 #endif

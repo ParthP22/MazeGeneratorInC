@@ -82,10 +82,16 @@ MazeGenerator* mazegenerator_init(){
 
     maze_generator->edge_list = edgelist_init((2 * GRID_WIDTH * (GRID_WIDTH - 1)));
 
+    if(maze_generator->edge_list == NULL){
+        fprintf(stderr, "Malloc for \'edge_list\' failed");
+    }
+
+    EdgeList* edge_list = maze_generator->edge_list;
+
     printf("\nEdges: [");
     for(int i = 0; i < (2 * GRID_WIDTH * (GRID_WIDTH - 1)); i++){
         //printf("[%d, %d], ", edges[i][0], edges[i][1]);
-        edgelist_add(maze_generator->edge_list, &edges[i]);
+        edgelist_add(edge_list, &edges[i]);
     }
     printf("]");
 

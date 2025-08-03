@@ -13,14 +13,14 @@ MazeGenerator* mazegenerator_init(){
 
     //initializes a 2D matrix with 2*n*(n-1) rows (which is the number of edges in a grid) and
     //4 columns for each row.
-    maze_generator->edges = (int(*)[5])malloc(sizeof(int) * (2 * GRID_WIDTH * (GRID_WIDTH - 1)) * 5);
+    maze_generator->edges = (Edge*)malloc(sizeof(Edge) * (2 * GRID_WIDTH * (GRID_WIDTH - 1)));
 
     if(maze_generator->edges == NULL){
         fprintf(stderr, "Malloc for \'edges\' failed");
     }   
 
     int (*grid)[GRID_WIDTH] = maze_generator->grid;
-    int (*edges)[5] = maze_generator->edges;
+    Edge* edges = maze_generator->edges;
 
 
     //Each node in the grid is numbered 0 to (n*n) - 1
@@ -39,16 +39,16 @@ MazeGenerator* mazegenerator_init(){
         for(int j = 0; j < GRID_WIDTH; j++){
             //determines of the edge exists and if it will be drawn as a vertical line
             if(j + 1 < GRID_WIDTH){
-                edges[k][0] = grid[i][j];
-                edges[k][1] = grid[i][j+1];
-                edges[k][2] = 1;
+                edges[k].init_node = grid[i][j];
+                edges[k].term_node = grid[i][j+1];
+                edges[k].orientation = VERTICAL;
                 k++;
             }
             //determines of the edge exists and if it will be drawn as a horizontal line
             if(i + 1 < GRID_HEIGHT){
-                edges[k][0] = grid[i][j];
-                edges[k][1] = grid[i+1][j];
-                edges[k][2] = 0;
+                edges[k].init_node = grid[i][j];
+                edges[k].term_node = grid[i+1][j];
+                edges[k].orientation = HORIZONTAL;
                 k++;
             }
         }
@@ -66,8 +66,8 @@ MazeGenerator* mazegenerator_init(){
 
     // Sets a random weight for every edge
     for(int i = 0; i < (2 * GRID_WIDTH * (GRID_WIDTH - 1)); i++){
-        edges[i][3] = rand() % (max - min + 1) + min;
-        edges[i][4] = 1;
+        edges[i].rand_weight = rand() % (max - min + 1) + min;
+        edges[i].selected = false;
     }
 
 
@@ -85,7 +85,7 @@ MazeGenerator* mazegenerator_init(){
     printf("\nEdges: [");
     for(int i = 0; i < (2 * GRID_WIDTH * (GRID_WIDTH - 1)); i++){
         //printf("[%d, %d], ", edges[i][0], edges[i][1]);
-        edgelist_add(maze_generator->edge_list, edges[i]);
+        edgelist_add(maze_generator->edge_list, &edges[i]);
     }
     printf("]");
 
@@ -108,23 +108,23 @@ EdgeList* kruskals(MazeGenerator* maze_generator){
     // printf("Print %d, ", tmp[0]);
 
     for(int i = 0; i < size; i++){
-        int* node = edgelist_get(edge_list,i);
+        Edge* node = edgelist_get(edge_list,i);
         if(node == NULL){
             // printf("Initial Index: %d", i);
             break;
         }
         //printf("\nIndex: %d", i);
-        int initial_node = djs_find_representative(forest, node[0]);
-        int terminal_node = djs_find_representative(forest, node[1]);
+        int initial_node = djs_find_representative(forest, node->init_node);
+        int terminal_node = djs_find_representative(forest, node->term_node);
         
         if(initial_node != terminal_node){
-            int* tmp = edgelist_get(edge_list,i);
+            Edge* tmp = edgelist_get(edge_list,i);
             if(tmp == NULL){
                 printf("Tmp is NULL, index: %d", i);
             }
             edgelist_add(mst, tmp);
 
-            edge_list->arr[i][4] = 0;
+            edge_list->list[i].selected = true;
             
             djs_union(forest, initial_node, terminal_node);
         }

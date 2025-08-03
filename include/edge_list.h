@@ -12,20 +12,20 @@
 typedef struct EdgeList{
     int capacity;
     int size;
-    int (*arr)[5];
+    Edge* list;
 } EdgeList;
 
 EdgeList* edgelist_init(int);
-bool edgelist_add(EdgeList*,int[5]);
-bool edgelist_insert(EdgeList*,int,int[5]);
-int* edgelist_remove(EdgeList*,int);
-int* edgelist_get(EdgeList*,int);
-int* edgelist_set(EdgeList*,int,int[5]);
+bool edgelist_add(EdgeList*,Edge*);
+bool edgelist_insert(EdgeList*,int,Edge*);
+Edge* edgelist_remove(EdgeList*,int);
+Edge* edgelist_get(EdgeList*,int);
+Edge* edgelist_set(EdgeList*,int,Edge*);
 int edgelist_size(EdgeList*);
 bool edgelist_is_empty(EdgeList*);
 void edgelist_to_string(EdgeList*);
 void edgelist_sort(EdgeList* edge_list);
 int _compare_edges(const void*, const void*);
-int (*_edgelist_reallocate(EdgeList*))[5];
+Edge* _edgelist_reallocate(EdgeList*);
 
 #endif

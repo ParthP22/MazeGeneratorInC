@@ -25,7 +25,7 @@
 
 typedef struct MazeGenerator{
     int (*grid)[GRID_WIDTH];
-    int (*edges)[5];
+    Edge* edges;
     EdgeList* edge_list;
     EdgeList* mst;
 } MazeGenerator;

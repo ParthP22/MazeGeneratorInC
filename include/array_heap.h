@@ -9,13 +9,11 @@
 #include <math.h>
 #include "reallocate.h"
 
-typedef struct ArrayHeap ArrayHeap;
-
-struct ArrayHeap{
+typedef struct ArrayHeap{
     int* heap;
     int size;
     int capacity;
-};
+} ArrayHeap;
 
 ArrayHeap* arrheap_init();
 int arrheap_parent(ArrayHeap*,int);

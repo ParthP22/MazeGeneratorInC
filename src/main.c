@@ -43,11 +43,11 @@ int main(void)
             // Small Line Pointing Down Along the Bottom Border
             DrawLine((GRID_WIDTH * UNIT_SIZE + MAZE_OFFSET - UNIT_SIZE), (GRID_HEIGHT * UNIT_SIZE + MAZE_OFFSET), (GRID_WIDTH * UNIT_SIZE + MAZE_OFFSET - UNIT_SIZE), (GRID_HEIGHT * UNIT_SIZE + (2 * MAZE_OFFSET)), BLACK);
 
-            // Draw vertical edge
-            if (list[i].orientation == VERTICAL)
+            // If the edge wasn't in the Minimum Spanning Tree, then draw it
+            if (list[i].selected == false)
             {
-                // If the edge wasn't in the Minimum Spanning Tree, then draw it
-                if (list[i].selected == false)
+                // Draw vertical edge
+                if (list[i].orientation == VERTICAL)
                 {
                     int x1 = ((list[i].init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
                     int y1 = ((list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
@@ -55,21 +55,19 @@ int main(void)
                     int y2 = ((list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
                     DrawLine(x1, y1, x2, y2, BLACK);
                 }
-
-            }
-            // Draw horizontal edge
-            else if (list[i].orientation == HORIZONTAL)
-            {
-                // If the edge wasn't in the Minimum Spanning Tree, then draw it
-                if (list[i].selected == false)
+                // Draw horizontal edge
+                else if (list[i].orientation == HORIZONTAL)
                 {
                     int x1 = ((list[i].init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
                     int y1 = ((list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
                     int x2 = ((list[i].init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
                     int y2 = ((list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
                     DrawLine(x1, y1, x2, y2, BLACK);
+                    
                 }
             }
+            
+            
             
         }
         EndDrawing();

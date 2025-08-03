@@ -56,29 +56,29 @@ int main(void)
 
 
             
-            if (edge_list->arr[i][2] == 1) // Vertical edge
+            if (edge_list->list[i].orientation == VERTICAL) // Vertical edge
             {
             
-                if (edge_list->arr[i][4] == 1)
+                if (edge_list->list[i].selected == false)
                 {
-                    int x1 = ((edge_list->arr[i][0] % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int y1 = ((edge_list->arr[i][0] / (GRID_HEIGHT)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
-                    int x2 = ((edge_list->arr[i][0] % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int y2 = ((edge_list->arr[i][0] / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int x1 = ((edge_list->list[i].init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int y1 = ((edge_list->list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
+                    int x2 = ((edge_list->list[i].init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int y2 = ((edge_list->list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
                     //printf("\nx1: %d, x2: %d, y1: %d, y2: %d", x1,x2,y1,y2);
                     DrawLine(x1, y1, x2, y2, BLACK);
                 }
 
             }
-            else if (edge_list->arr[i][2] == 0) // Horizontal edge
+            else if (edge_list->list[i].orientation == HORIZONTAL) // Horizontal edge
             {
             
-                if (edge_list->arr[i][4] == 1)
+                if (edge_list->list[i].selected == false)
                 {
-                    int x1 = ((edge_list->arr[i][0] % (GRID_WIDTH)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
-                    int y1 = ((edge_list->arr[i][0] / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int x2 = ((edge_list->arr[i][0] % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
-                    int y2 = ((edge_list->arr[i][0] / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int x1 = ((edge_list->list[i].init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE - UNIT_SIZE + MAZE_OFFSET;
+                    int y1 = ((edge_list->list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int x2 = ((edge_list->list[i].init_node % (GRID_WIDTH)) + 1) * UNIT_SIZE + MAZE_OFFSET;
+                    int y2 = ((edge_list->list[i].init_node / (GRID_HEIGHT)) + 1) * UNIT_SIZE + MAZE_OFFSET;
                     //printf("\nx1: %d, x2: %d, y1: %d, y2: %d", x1,x2,y1,y2);
                     DrawLine(x1, y1, x2, y2, BLACK);
                 }

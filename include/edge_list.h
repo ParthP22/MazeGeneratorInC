@@ -9,12 +9,11 @@
 #include "reallocate.h"
 #include "edge.h"
 
-struct EdgeList{
+typedef struct EdgeList{
     int capacity;
     int size;
     int (*arr)[5];
-}typedef EdgeList;
-
+} EdgeList;
 
 EdgeList* edgelist_init(int);
 bool edgelist_add(EdgeList*,int[5]);
